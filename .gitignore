@@ -1,0 +1,22 @@
+# Dataset (download from Kaggle)
+data/fake_job_postings.csv
+data/processed.csv
+
+# Model weights (large binary files)
+models/best_model/
+models/tokenizer/
+
+# TensorBoard logs
+tensorboard_logs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+venv/
+.env
+
+# OS
+.DS_Store
+Thumbs.db
