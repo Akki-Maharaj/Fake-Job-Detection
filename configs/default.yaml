@@ -1,0 +1,28 @@
+seed: 42
+
+data:
+  raw_csv: data/fake_job_postings.csv
+  processed_csv: data/processed.csv
+  text_columns: [title, company_profile, description, requirements, benefits]
+  label_column: fraudulent
+  test_size: 0.2
+  val_size: 0.5
+  seed: 42
+
+baseline:
+  max_features: 20000
+  ngram_range: [1, 2]
+  model: logreg   # or xgboost
+  class_weight: balanced
+  output_dir: models/baseline
+
+bert:
+  pretrained_name: distilbert-base-uncased
+  max_len: 256
+  batch_size: 16
+  epochs: 3
+  lr: 2.0e-5
+  warmup_ratio: 0.1
+  weight_decay: 0.01
+  output_dir: models/bert
+  tensorboard_dir: tensorboard_logs
