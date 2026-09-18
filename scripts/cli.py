@@ -6,6 +6,7 @@ Examples
 python scripts/cli.py prepare-data --config configs/default.yaml
 python scripts/cli.py train-baseline --config configs/default.yaml
 python scripts/cli.py train-bert --config configs/default.yaml
+python scripts/cli.py train-bert --config configs/default.yaml --resume   # continue after a pause
 python scripts/cli.py predict --model-type baseline --model-dir models/baseline --text "..."
 """
 from __future__ import annotations
@@ -49,7 +50,12 @@ def cmd_train_bert(args):
     cfg = load_config(args.config)
     df = pd.read_csv(cfg.data.processed_csv)
     train_df, val_df, _ = stratified_splits(df, cfg.data)
-    metrics = train_bert(train_df, val_df, cfg.bert, seed=cfg.seed)
+    metrics = train_bert(
+        train_df, val_df, cfg.bert, seed=cfg.seed,
+        checkpoint_dir=cfg.bert.checkpoint_dir,
+        resume=args.resume,
+        checkpoint_every_n_steps=cfg.bert.checkpoint_every_n_steps,
+    )
     logger.info("BERT metrics: %s", metrics)
 
 
@@ -72,6 +78,10 @@ def main():
 
     p_bert = sub.add_parser("train-bert")
     p_bert.add_argument("--config", default="configs/default.yaml")
+    p_bert.add_argument(
+        "--resume", action="store_true",
+        help="Resume from the last checkpoint in bert.checkpoint_dir instead of starting fresh.",
+    )
     p_bert.set_defaults(func=cmd_train_bert)
 
     p_pred = sub.add_parser("predict")

@@ -51,6 +51,8 @@ class BertConfig:
     weight_decay: float = 0.01
     output_dir: str = "models/bert"
     tensorboard_dir: str = "tensorboard_logs"
+    checkpoint_dir: str = "checkpoints/bert"
+    checkpoint_every_n_steps: int = 100
 
 
 @dataclass

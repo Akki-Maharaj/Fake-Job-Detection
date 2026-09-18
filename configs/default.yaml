@@ -26,3 +26,5 @@ bert:
   weight_decay: 0.01
   output_dir: models/bert
   tensorboard_dir: tensorboard_logs
+  checkpoint_dir: checkpoints/bert
+  checkpoint_every_n_steps: 100
