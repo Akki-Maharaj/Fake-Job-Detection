@@ -74,6 +74,38 @@ python scripts/cli.py predict --model-type baseline --model-dir models/baseline 
 pytest
 ```
 
+## Results
+
+Baseline (TF-IDF + Logistic Regression) vs. fine-tuned DistilBERT, evaluated
+on the same 1,788-example held-out test set (4.8% fake):
+
+| Metric          | Baseline (TF-IDF) | DistilBERT | Delta   |
+|-----------------|-------------------|------------|---------|
+| Accuracy        | 0.9843            | 0.9894     | +0.0050 |
+| F1 (macro)      | 0.9190            | 0.9464     | +0.0274 |
+| Fake precision  | 0.8021            | 0.8317     | +0.0296 |
+| Fake recall     | 0.8953            | 0.9767     | +0.0814 |
+| Fake F1         | 0.8462            | 0.8984     | +0.0522 |
+| AUC-ROC         | 0.9949            | 0.9991     | +0.0042 |
+| False negatives | 9 / 86            | 2 / 86     | -7      |
+
+Full numbers in [`results/comparison.json`](results/comparison.json).
+
+**Reading these:** accuracy alone barely separates the two models (98.4% vs
+98.9%) — it's dominated by the 95% majority class and hides the actual
+difference. The metric that matters here is **fake recall**: DistilBERT
+catches 97.7% of fraudulent postings vs. 89.5% for the baseline, cutting
+missed fakes (false negatives — the costliest error, since it means a scam
+posting goes undetected) from 9 down to 2. Fake precision also improved
+alongside recall, so DistilBERT isn't trading more false alarms for fewer
+misses; it's better on both axes.
+
+That said, the baseline's numbers are genuinely solid on their own — 89.5%
+fake recall from a model that trains in ~15 seconds on a CPU, with no GPU
+required. DistilBERT's clear improvement justifies its extra training cost
+(minutes on a GPU, more moving parts) rather than assuming it — which is
+exactly the comparison the original notebook-based project never made.
+
 ## Design notes
 
 - **Class weighting**: both models handle the ~95/5 imbalance — the baseline
@@ -88,10 +120,15 @@ pytest
   can decide deliberately whether to keep, drop, or explicitly encode that
   signal rather than have the model exploit it implicitly.
 
-## What to compare, and why it matters
+## Reproducing these results
 
-Report baseline vs. DistilBERT side by side (accuracy, macro F1, fake
-precision/recall, AUC-ROC) rather than only reporting the transformer's
-numbers. On formulaic fraud language, a linear model over n-grams can land
-surprisingly close to a fine-tuned transformer — if that holds here too,
-it's a genuinely useful finding about the problem, not a downgrade.
+```bash
+python scripts/cli.py prepare-data --config configs/default.yaml
+python scripts/cli.py train-baseline --config configs/default.yaml
+python scripts/cli.py train-bert --config configs/default.yaml   # or train on Colab, see below
+python scripts/compare_models.py --config configs/default.yaml --out results/comparison.json
+```
+
+If training DistilBERT locally isn't practical (no GPU), it trains fine on
+a free Colab GPU runtime — copy `data/processed.csv` there, train, and copy
+the resulting `models/bert/` folder back for local inference and comparison.

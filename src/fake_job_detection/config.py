@@ -72,7 +72,10 @@ def load_config(path: str | Path) -> Config:
     if "data" in raw:
         cfg.data = DataConfig(**raw["data"])
     if "baseline" in raw:
-        cfg.baseline = BaselineConfig(**raw["baseline"])
+        baseline_raw = dict(raw["baseline"])
+        if "ngram_range" in baseline_raw:
+            baseline_raw["ngram_range"] = tuple(baseline_raw["ngram_range"])
+        cfg.baseline = BaselineConfig(**baseline_raw)
     if "bert" in raw:
         cfg.bert = BertConfig(**raw["bert"])
     if "seed" in raw:

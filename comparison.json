@@ -1,0 +1,36 @@
+{
+  "test_set": {
+    "n_examples": 1788,
+    "fake_rate": 0.048
+  },
+  "baseline": {
+    "accuracy": 0.9843,
+    "f1_macro": 0.9190,
+    "precision_macro": 0.8984,
+    "recall_macro": 0.9421,
+    "fake_precision": 0.8021,
+    "fake_recall": 0.8953,
+    "fake_f1": 0.8462,
+    "auc_roc": 0.9949,
+    "avg_precision": 0.9538,
+    "false_negatives": 9,
+    "false_positives": 19,
+    "true_positives": 77,
+    "true_negatives": 1683
+  },
+  "bert": {
+    "accuracy": 0.9894,
+    "f1_macro": 0.9464,
+    "precision_macro": 0.9152,
+    "recall_macro": 0.9834,
+    "fake_precision": 0.8317,
+    "fake_recall": 0.9767,
+    "fake_f1": 0.8984,
+    "auc_roc": 0.9991,
+    "avg_precision": 0.9842,
+    "false_negatives": 2,
+    "false_positives": 17,
+    "true_positives": 84,
+    "true_negatives": 1685
+  }
+}
